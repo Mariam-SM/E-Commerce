@@ -2,9 +2,12 @@
 using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data;
+using Services;
+using Services.MappingProfiles;
+using ServicesAbstraction;
 
 namespace E_Commerce.Web
-{     // V03
+{     // V03 - AL
     public class Program
     {
         public static void Main(string[] args)
@@ -24,6 +27,10 @@ namespace E_Commerce.Web
             });
 
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            builder.Services.AddScoped<IUnitOfWork,IUnitOfWork>();
+            //builder.Services.AddAutoMapper(x => x.AddProfile(new ProductProfile()));
+            builder.Services.AddAutoMapper(typeof(AssemblyReference).Assembly);
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
 
             #endregion
