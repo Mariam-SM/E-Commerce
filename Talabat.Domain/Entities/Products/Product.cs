@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Talabat.Domain.Entities.Products
+{
+    public class Product : BaseAuditableEntity<int>
+    {
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public string? PictureUrl { get; set; }
+        public decimal Price { get; set; }
+        public int? CategoryId { get; set; } // Foreign Key to ProductCategory Entity
+        public virtual ProductCategory? ProductCategory { get; set; } = null!;
+        public int? BrandId { get; set; } // Foreign Key to ProductBrand Entity
+        public virtual ProductBrand? ProductBrand { get; set; } = null!;
+       
+    }
+}
