@@ -26,6 +26,9 @@ namespace Talabat.Infrastructure.Persistence.Repositories.Generic_Repositories
                 query = query.OrderByDescending(specifications.OrderByDesc);
 
 
+            if(specifications.IsPaganinationEnable)
+                query = query.Skip(specifications.Skip).Take(specifications.Take);
+
             if (specifications.Includes is not null)
                  query = specifications.Includes.Aggregate(query, (currentQuery, IncludeExpression) => currentQuery.Include(IncludeExpression));
 

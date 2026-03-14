@@ -4,22 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Talabat.Domain.Contracts.Persitstence;
+using Talabat.Domain.Contracts.Persitstence.DbInitializer;
+using Talabat.Infrastructure.Persistence.Data;
 
-namespace Talabat.Infrastructure.Persistence.Data
+namespace Talabat.Infrastructure.Persistence._Common
 {
-    internal class StoreContextInitializer(StoreContext dbContext) : IStoreContextInitializer
+    public class StoreDbContextInitializer(StoreDbContext dbContext) :DbInitializer(dbContext) ,IStoreDbContextInitializer
     {
-        public async Task InitializeAsync()
-        {
-            var pinndingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-
-            if (pinndingMigrations.Any())
-                dbContext.Database.MigrateAsync();
-
-        }
-
-        public async Task SeedAsync()
+      
+        public override async Task SeedAsync()
         {
             if (!dbContext.Brands.Any())
             {

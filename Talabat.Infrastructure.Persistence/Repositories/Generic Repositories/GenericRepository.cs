@@ -10,7 +10,7 @@ using Talabat.Infrastructure.Persistence.Repositories.Generic_Repositories;
 
 namespace Talabat.Infrastructure.Persistence.Repositories
 {
-    internal class GenericRepository<TEntity,TKey>(StoreContext _dbContext) : IGenericRepository<TEntity, TKey>
+    internal class GenericRepository<TEntity,TKey>(StoreDbContext _dbContext) : IGenericRepository<TEntity, TKey>
         where TEntity : BaseEntity<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -30,9 +30,14 @@ namespace Talabat.Infrastructure.Persistence.Repositories
         => withTraching ? await ApplySpecifications(specs).ToListAsync() :
                           await ApplySpecifications(specs).AsNoTracking().ToListAsync();
 
-        public async Task<TEntity?> GetWithSpecAsync(ISpecifications<TEntity, TKey> specs)
+        public async Task<TEntity?> GetWithSpecAsync(ISpecifications<TEntity, TKey> spec)
         {
-            return await ApplySpecifications(specs).FirstOrDefaultAsync();
+            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetCountAsync(ISpecifications<TEntity, TKey> spec)
+        {
+            return await ApplySpecifications(spec).CountAsync();
         }
 
         #region Helper Methods
@@ -41,6 +46,8 @@ namespace Talabat.Infrastructure.Persistence.Repositories
         {
             return SpecificationsEvaluator<TEntity, TKey>.GetQuery(_dbContext.Set<TEntity>(), specs);
         }
+
+       
 
         #endregion
 

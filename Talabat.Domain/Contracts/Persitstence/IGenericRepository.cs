@@ -23,5 +23,7 @@ namespace Talabat.Domain.Contracts.Persitstence
 
         Task<TEntity?> GetWithSpecAsync(ISpecifications<TEntity, TKey> spec );
 
+        Task<int> GetCountAsync(ISpecifications<TEntity, TKey> spec);
+
     }
 }

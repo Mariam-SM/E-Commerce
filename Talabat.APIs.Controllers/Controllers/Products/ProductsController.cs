@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Talabat.APIs.Controllers.Base;
+using Talabat.APIs.Controllers.Errors;
 using Talabat.Application.Abstraction.Models.Products;
 using Talabat.Application.Abstraction.Services;
 
@@ -13,9 +14,9 @@ namespace Talabat.APIs.Controllers.Controllers.Products
     public class ProductsController(IServiceManager serviceManager) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetProducts(string? sort, int? brandId, int? categoryId)
+        public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams productSpecParams)
         {
-            var products = await serviceManager.ProductService.GetAllProductsAsync(sort, brandId , categoryId);
+            var products = await serviceManager.ProductService.GetAllProductsAsync(productSpecParams);
             return Ok(products);
         }
 
@@ -26,7 +27,7 @@ namespace Talabat.APIs.Controllers.Controllers.Products
             var product = await serviceManager.ProductService.GetProducAsync(id);
             if (product == null)
             {
-                return NotFound(new { StatusCode = 404 , message = "Not Found."}); 
+                return NotFound(new ApiErrorsResponse(404)); 
             }
             
             return Ok(product);

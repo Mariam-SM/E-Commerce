@@ -10,8 +10,10 @@ namespace Talabat.Domain.Contracts.Specifications
 {
     public class ProductWithBrandAndCategorySpecifications : BaseSpecifications<Product, int>
     {
-        public ProductWithBrandAndCategorySpecifications(string? sort, int? brandId, int? categoryId) 
+        public ProductWithBrandAndCategorySpecifications(string? sort, int? brandId, int? categoryId,string? search ,int pageIndex, int pageSize) 
             : base( P =>
+                    (string.IsNullOrEmpty(search) || P.Name.Contains(search!))
+                    &&
                     (!brandId.HasValue || P.BrandId == brandId)
                     &&
                     (!categoryId.HasValue || P.CategoryId ==categoryId)
@@ -20,6 +22,7 @@ namespace Talabat.Domain.Contracts.Specifications
         {
             AddIncludes();
             AddSorting(sort);
+            AddPagination(pageSize * (pageIndex - 1), pageSize);
 
         }
 
