@@ -14,7 +14,11 @@ namespace Talabat.Infrastructure.Persistence.Data.Config.Products
             builder.Property(product => product.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-            
+
+            builder.Property(product => product.NormlizedName)
+               .IsRequired()
+               .HasMaxLength(100);
+
             builder.Property(product => product.Description).IsRequired();
 
             builder.Property(product => product.Price)

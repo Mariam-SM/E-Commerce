@@ -16,6 +16,9 @@ namespace Talabat.Domain.Contracts.Specifications
         public List<Expression<Func<TEntity, object>>> Includes { get; set; } = new();
         public Expression<Func<TEntity, object>>? OrderBy { get; set; } = null;
         public Expression<Func<TEntity, object>>? OrderByDesc { get; set; } = null;
+        public int Skip { get; set; } = 0;
+        public int Take { get; set; } = 0;
+        public bool IsPaganinationEnable { get; set; } = false;
 
         //public BaseSpecifications()
         //{
@@ -54,6 +57,14 @@ namespace Talabat.Domain.Contracts.Specifications
         {
 
         } 
+
+        private protected virtual void AddPagination(int skip , int take)
+        {
+            IsPaganinationEnable = true;
+            Skip = skip;
+            Take = take;
+
+        }
 
 
         #endregion

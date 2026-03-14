@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Talabat.Application.Abstraction.Services;
 using Talabat.Application.Mapping;
 using Talabat.Application.Services;
+using Talabat.Domain.Contracts.Infrastructure;
+using Talabat.Domain.Contracts.Persitstence;
 
 namespace Talabat.Application
 {
@@ -10,7 +13,8 @@ namespace Talabat.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            // Add AutoMapper
+            #region Add AutoMapper
+            
             // auto mapper version 11 : 14
             //services.AddAutoMapper(typeof(MappingProfile));
             //services.AddAutoMapper.AddProfile<MappingProfile>();
@@ -25,12 +29,28 @@ namespace Talabat.Application
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MappingProfile>();
-            }, typeof(MappingProfile).Assembly);
+            }, typeof(MappingProfile).Assembly); 
+            #endregion
 
 
             //services.AddScoped(typeof(IProductService), typeof(ProductService));
-            services.AddScoped(typeof(IServiceManager), typeof(ServiceManager));
 
+            services.AddScoped(typeof(Func<IProductService>), (serviceProvider) =>
+            {
+                var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>(); 
+                var mapper = serviceProvider.GetRequiredService<IMapper>();
+                return () => new ProductService(unitOfWork, mapper);
+            });
+
+            services.AddScoped(typeof(Func<IBasketService>), (serviceProvider) =>
+            {
+                var basketRepo = serviceProvider.GetRequiredService<IBasketDBRepoistory>();
+                var mapper = serviceProvider.GetRequiredService<IMapper>();
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                return () => new BasketService(basketRepo, mapper, configuration);
+            });
+
+            services.AddScoped(typeof(IServiceManager), typeof(ServiceManager));
             return services;
         }
     }

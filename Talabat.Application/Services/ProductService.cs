@@ -9,21 +9,33 @@ using Talabat.Application.Abstraction.Services;
 using Talabat.Domain.Contracts.Persitstence;
 using Talabat.Domain.Entities.Products;
 using Talabat.Domain.Contracts.Specifications;
+using Talabat.Application.Abstraction.Common;
+using Talabat.Application.Exceptions;
 
 namespace Talabat.Application.Services
 {
     internal class ProductService(IUnitOfWork unitOfWork, IMapper mapper) : IProductService
     {
 
-        public async Task<IEnumerable<ProductToReturnDto>> GetAllProductsAsync(string? sort, int? brandId, int? categoryId)
+        public async Task<Pagination<ProductToReturnDto>> GetAllProductsAsync(ProductSpecParams productSpecParams)
         {
-            var specs = new ProductWithBrandAndCategorySpecifications(sort, brandId, categoryId);
+            var spec = new ProductWithBrandAndCategorySpecifications
+                (productSpecParams.Sort, productSpecParams.BrandId, productSpecParams.CategoryId, productSpecParams.Search, productSpecParams.PageIndex, productSpecParams.PageSize);
 
-            var products = await unitOfWork.GetRepository<Product, int>().GetAllWithSpecAsync(specs);
+            var productRepo = unitOfWork.GetRepository<Product, int>();
+
+            var products = await productRepo.GetAllWithSpecAsync(spec);
+
+
+            var countSpec = new ProductForCountSpec(productSpecParams.BrandId, productSpecParams.CategoryId, productSpecParams.Search);
+            
+            var count = await productRepo.GetCountAsync(countSpec);
 
             // Map products to ProductToReturnDto
-            var productDtos = mapper.Map<IEnumerable<ProductToReturnDto>>(products);
-            return productDtos;
+            var data = mapper.Map<IEnumerable<ProductToReturnDto>>(products);
+
+
+            return new Pagination<ProductToReturnDto>(productSpecParams.PageIndex, productSpecParams.PageSize){ Count = count, Data = data};
         }
 
         public async Task<ProductToReturnDto?> GetProducAsync(int id)
@@ -32,6 +44,8 @@ namespace Talabat.Application.Services
             var specs = new ProductWithBrandAndCategorySpecifications(id);
 
             var product = await unitOfWork.GetRepository<Product , int>().GetWithSpecAsync(specs);
+
+            if (product is null) throw new NotFoundException(nameof(Product) , id);
             var productDto = mapper.Map<ProductToReturnDto>(product);
             return productDto;
         }
