@@ -11,5 +11,6 @@ namespace Talabat.Application.Abstraction.Services
     {
         public IProductService ProductService { get; }
         public IBasketService BasketService { get; }
+        public ICacheService CacheService { get; }
     }
 }

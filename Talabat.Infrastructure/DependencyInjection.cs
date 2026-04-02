@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Talabat.Domain.Contracts.Infrastructure;
 using Talabat.Infrastructure.BasketDB_Repository;
+using Talabat.Infrastructure.Persistence.Repositories.Cache;
+
 
 namespace Talabat.Infrastructure
 {
@@ -23,6 +20,7 @@ namespace Talabat.Infrastructure
                 return ConnectionMultiplexerObj;
             });
             services.AddScoped<IBasketDBRepoistory, BasketDBRepoistory>();
+            services.AddScoped<ICacheRepository,CacheRepository>();
             return services;
         }
     }
