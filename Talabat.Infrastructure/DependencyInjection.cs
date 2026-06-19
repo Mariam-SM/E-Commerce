@@ -12,12 +12,10 @@ namespace Talabat.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddScoped(typeof(IConnectionMultiplexer), (serviceProvider) =>
+            services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
             {
                 var connectionString = config.GetConnectionString("Redis");
-
-                var ConnectionMultiplexerObj = ConnectionMultiplexer.Connect(connectionString!);
-                return ConnectionMultiplexerObj;
+                return ConnectionMultiplexer.Connect(connectionString!);
             });
             services.AddScoped<IBasketDBRepoistory, BasketDBRepoistory>();
             services.AddScoped<ICacheRepository,CacheRepository>();

@@ -1,16 +1,21 @@
 
-using Microsoft.EntityFrameworkCore;
-using Talabat.APIs.Extensions;
-using Talabat.Domain.Contracts;
-using Talabat.Infrastructure.Persistence;
-using Talabat.Application;
-using Talabat.Infrastructure.Persistence.Data;
-using Microsoft.Extensions.DependencyInjection;
-using static Talabat.APIs.Controllers.Errors.ApiValidationErrorResponse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Talabat.APIs.Controllers.Errors;
+using Talabat.APIs.Extensions;
 using Talabat.APIs.Middlewares;
+using Talabat.Application;
+using Talabat.Domain.Contracts;
+using Talabat.Domain.Contracts.Persitstence.DbInitializer;
 using Talabat.Infrastructure;
+using Talabat.Infrastructure.Persistence;
+using Talabat.Infrastructure.Persistence._Common;
+using Talabat.Infrastructure.Persistence.Data;
+using Microsoft.AspNetCore.Identity;
+using Talabat.Domain.Identity;
+using Talabat.Infrastructure.Persistence.Identity;
+using static Talabat.APIs.Controllers.Errors.ApiValidationErrorResponse;
 namespace Talabat.APIs
 {
     public class Program
@@ -50,6 +55,17 @@ namespace Talabat.APIs
 
             //DependencyInjection.AddPersistenceServices(builder.Services, builder.Configuration); // Calling the extension Method
             builder.Services.AddPersistenceServices(builder.Configuration);
+            // Register Identity services here (host project) so AddIdentity extension methods are available
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
+            .AddEntityFrameworkStores<StoreIdentityDbContext>()
+            .AddDefaultTokenProviders();
             builder.Services.AddApplicationServices();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -57,7 +73,6 @@ namespace Talabat.APIs
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            
             //builder.Services.AddApplicationServices(builder.Configuration);
 
 

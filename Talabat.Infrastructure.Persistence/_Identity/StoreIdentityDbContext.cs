@@ -23,8 +23,7 @@ namespace Talabat.Infrastructure.Persistence.Identity
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.ApplyConfiguration(new ApplicationUserConfigurations());
-            //builder.ApplyConfiguration(new AddressConfigurations());
+
             builder.ApplyConfigurationsFromAssembly(typeof(StoreIdentityDbContext).Assembly,
                 type => type.GetCustomAttribute<DbContextTypeAttribute>()?.DbContextType == (typeof(StoreIdentityDbContext)));
         }
