@@ -14,7 +14,7 @@ using Talabat.Application.Exceptions;
 
 namespace Talabat.Application.Services
 {
-    internal class ProductService(IUnitOfWork unitOfWork, IMapper mapper) : IProductService
+    public class ProductService(IUnitOfWork unitOfWork, IMapper mapper) : IProductService
     {
 
         public async Task<Pagination<ProductToReturnDto>> GetAllProductsAsync(ProductSpecParams productSpecParams)
